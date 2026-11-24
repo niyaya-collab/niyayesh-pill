@@ -3,7 +3,7 @@ name: Pill reminder
 on:
   workflow_dispatch:
   schedule:
-    - cron: "22 */2 * * *"
+    - cron: "7,27,47 * * * *"
 
 permissions:
   contents: write
@@ -15,7 +15,7 @@ concurrency:
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 22
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -23,11 +23,11 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: python -m pip install -r requirements.txt
-      - name: Catch up once
+      - name: Listen
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           PYTHONUNBUFFERED: "1"
-          WATCH_SECONDS: "720"
+          WATCH_SECONDS: "1140"
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -39,6 +39,6 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data.json
           if ! git diff --cached --quiet; then
-            git commit --trailer "Co-authored-by: Cursor <cursoragent@cursor.com>" -m "Update reminder data"
-            git push
+            git commit --trailer "Co-authored-by: Cursor <cursoragent@cursor.com>" -m "Update reminder data" || true
+            git push || true
           fi
