@@ -37,8 +37,11 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git pull --rebase origin main || true
           git add data.json
           if ! git diff --cached --quiet; then
             git commit --trailer "Co-authored-by: Cursor <cursoragent@cursor.com>" -m "Update reminder data" || true
-            git push || true
           fi
+          git pull --rebase origin main || true
+          git push origin HEAD:main || true
