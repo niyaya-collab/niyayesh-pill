@@ -1,9 +1,9 @@
-﻿name: Pill reminder
+name: Pill reminder
 
 on:
   workflow_dispatch:
   schedule:
-    - cron: "7 */6 * * *"
+    - cron: "22 */2 * * *"
 
 permissions:
   contents: write
@@ -18,24 +18,20 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
           cache: pip
-
       - run: python -m pip install -r requirements.txt
-
       - name: Catch up once
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           PYTHONUNBUFFERED: "1"
-          WATCH_SECONDS: "600"
+          WATCH_SECONDS: "720"
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           python bot.py --watch
-
       - name: Save data.json
         if: always()
         run: |
