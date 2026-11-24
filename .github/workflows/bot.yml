@@ -41,7 +41,18 @@ jobs:
           git fetch origin main || true
           git pull --rebase origin main || true
           date -u +%Y-%m-%dT%H:%M:%SZ > .heartbeat
-          git add .heartbeat data.json
+          # never replace a filled data.json with an empty skeleton
+          if [ -f data.json ]; then
+            remote_size=$(git cat-file -s origin/main:data.json 2>/dev/null || echo 0)
+            local_size=$(wc -c < data.json)
+            if [ "$local_size" -ge 200 ] || [ "$remote_size" -lt 200 ]; then
+              git add data.json
+            else
+              echo "Skip data.json overwrite (local too small vs remote)"
+              git checkout origin/main -- data.json || true
+            fi
+          fi
+          git add .heartbeat
           if ! git diff --cached --quiet; then
             git commit -m "Heartbeat + reminder data" || true
           fi
