@@ -10,3 +10,7 @@ venv/
 data.json.tmp
 
 # data.json نادیده گرفته نمی‌شود. حافظهٔ ربات است و باید داخل ریپو بماند.
+
+data.json.private.bak
+*.private.bak
+
