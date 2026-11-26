@@ -3,8 +3,10 @@ name: Pill reminder
 on:
   workflow_dispatch:
   schedule:
-    - cron: "8,23,38,53 * * * *"
-    - cron: "15,30,45,0 * * * *"
+    # One wake each hour. The shift itself keeps listening for nearly three
+    # hours, so a late schedule does not put the bot to sleep. Nothing here
+    # starts another workflow.
+    - cron: "37 * * * *"
 
 permissions:
   contents: write
@@ -16,7 +18,7 @@ concurrency:
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 170
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -28,7 +30,7 @@ jobs:
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           PYTHONUNBUFFERED: "1"
-          WATCH_SECONDS: "3600"
+          WATCH_SECONDS: "9600"
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
